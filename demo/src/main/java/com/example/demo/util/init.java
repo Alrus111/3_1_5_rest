@@ -29,7 +29,7 @@ public class init {
         roleService.saveRole(roleAdmin);
         roleService.saveRole(roleUser);
 
-        User admin = new User("adminName", "adminLastName", "admin", "admin", Set.of(roleAdmin, roleUser));
+        User admin = new User("adminName", "adminLastName", "admin", "admin", Set.of(roleAdmin));
         userService.saveUser(admin);
 
         User user = new User("userName", "userLastname", "user", "user", Set.of(roleUser));

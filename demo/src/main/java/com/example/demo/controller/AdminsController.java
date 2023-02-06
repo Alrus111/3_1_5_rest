@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Set;
 
 @Controller
@@ -28,7 +29,9 @@ public class AdminsController {
     }
 
     @GetMapping()
-    public String getAdminPage(Model model){
+    public String getAdminPage(Model model, Principal principal){
+        Long id = userService.getUserByUsername(principal.getName()).getId();
+        model.addAttribute("admin", userService.getUserById(id));
         model.addAttribute("users", userService.getAllUsers());
         return "/admin";
     }
@@ -57,7 +60,7 @@ public class AdminsController {
         return "/edit";
     }
 
-    @PatchMapping(value = "/{id}")
+    @PatchMapping(value = "/{id}/edit")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam(value = "nameRole") String nameRole) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 

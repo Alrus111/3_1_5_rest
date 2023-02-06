@@ -7,7 +7,7 @@
 <body>
 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-<form th:method="patch" th:action="@{/admin/{id}(id=${user.getId()})}" th:object="${user}">
+<form th:method="patch" th:action="@{/admin/{id}/edit(id=${user.getId()})}" th:object="${user}">
     <label for="name">Enter name</label>
     <input type="text" th:field="*{name}" id="name"/>
     <label for="lastname">Enter name</label>

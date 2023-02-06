@@ -5,8 +5,6 @@ import com.example.demo.model.User;
 import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +45,7 @@ public class UsersController {
 
     @GetMapping("/login")
     public String loginPage(){
-        return "/login";
+        return "logi1n";
     }
 
     @GetMapping("/user")
