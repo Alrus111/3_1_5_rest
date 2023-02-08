@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show user</title>
+  <link rel="shortcut icon" href="Spring-logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <div class="navbar-brand">
+        <strong>
+          <td th:text="${user.getUsername()}"></td>
+        </strong>
+        with role <td th:each="role:${admin.getRoles()}">[[${role.getName()}]]</td>
+      </div>
+    </div>
+    <a style="color: gray" class="nav-link" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-2 pt-2">
+      <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+        <a class="nav-link" th:href="@{/admin}" role="tab" aria-selected="false">Admin</a>
+        <a class="nav-link active" th:href="@{/admin/user}" role="tab" aria-selected="true">User</a>
+      </div>
+    </div>
+    <div class="col-10 pt-2 bg-light">
+      <h1>User information-page</h1>
+      <div class="col-12 bg-light border pt-2 pb-2 ps-3">
+        <h5>About user</h5>
+      </div>
+      <div class="mb-3 bg-white pt-3 pb-3 border">
+        <div class="pe-4 ps-4 pt-2 ">
+          <table class="table table-striped border-top">
+            <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Lastname</th>
+              <th scope="col">Username</th>
+              <th scope="col">Role</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user :${user}"></tr>
+            <td th:utext="${user.getId()}">value</td>
+            <td th:utext="${user.getName()}">value</td>
+            <td th:utext="${user.getLastname()}">value</td>
+            <td th:utext="${user.getUsername()}">value</td>
+            <td>User</td>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</body>
+</html>

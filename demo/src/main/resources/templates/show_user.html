@@ -16,7 +16,7 @@
 				<strong>
 					<td th:text="${user.getUsername()}"></td>
 				</strong>
-				with role User
+				with role <td th:each="role:${user.getRoles()}">[[${role.getName()}]]</td>
 			</div>
 		</div>
 		<a style="color: gray" class="nav-link" href="/logout">Logout</a>

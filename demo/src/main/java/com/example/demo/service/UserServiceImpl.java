@@ -59,8 +59,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void updateUser(User updatedUser) {
+    public boolean updateUser(User updatedUser) {
+        boolean checkUpdateUsername = false;
+        if (userRepository.getUserByUsername(updatedUser.getUsername())==null)
+            checkUpdateUsername = true;
         userRepository.save(updatedUser);
+        return checkUpdateUsername;
     }
 
     @Transactional

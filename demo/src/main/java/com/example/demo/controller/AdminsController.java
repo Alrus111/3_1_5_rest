@@ -29,15 +29,17 @@ public class AdminsController {
     }
 
     @GetMapping()
-    public String getAdminPage(Model model, Principal principal){
-        Long id = userService.getUserByUsername(principal.getName()).getId();
-        model.addAttribute("admin", userService.getUserById(id));
+    public String getAdminPage(@ModelAttribute("user") User user,
+                               Model model, Principal principal) {
+
+        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("roles", roleService.getRoles());
         return "/admin";
     }
 
     @GetMapping("/new")
-    public String getNewUserForm (@ModelAttribute("user") User user, Model model) {
+    public String getNewUserForm(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("roles", roleService.getRoles());
         return "/new";
     }
@@ -54,27 +56,44 @@ public class AdminsController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editUser(Model model, @PathVariable("id") Long id){
+    public String editUser(Model model, @PathVariable("id") Long id) {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("roles", roleService.getRoles());
         return "/edit";
     }
 
     @PatchMapping(value = "/{id}/edit")
-    public String updateUser(@ModelAttribute("user") User user, @RequestParam(value = "nameRole") String nameRole) {
+    public String updateUser(@ModelAttribute("user1") User user, @RequestParam(value = "nameRole") String nameRole) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role role = new Role(nameRole);
         roleService.saveRole(role);
         user.setRoles(Set.of(role));
-        userService.updateUser(user);
-        return "redirect:/admin";
+
+        if (userService.updateUser(user))
+            return "redirect:/login";
+        else
+            return "redirect:/admin";
     }
 
     @DeleteMapping("/{id}/delete")
-    public String removeUserById(@PathVariable("id") Long id) {
+    public String removeUserById(@PathVariable("id") Long id, Principal principal) {
+        boolean checkDeletingUserIsCurrent = userService.getUserByUsername(principal.getName()).equals(userService.getUserById(id));
+
         roleService.removeRoleById(id);
         userService.removeById(id);
-        return "redirect:/admin";
+
+        if (checkDeletingUserIsCurrent)
+            return "redirect:/login";
+        else
+            return "redirect:/admin";
+    }
+
+    @GetMapping("/user")
+    public String getUserPage(Model model,Principal principal) {
+        Long id = userService.getUserByUsername(principal.getName()).getId();
+        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
+        model.addAttribute("user", userService.getUserById(id));
+        return "admin_show_user";
     }
 }

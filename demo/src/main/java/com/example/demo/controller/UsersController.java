@@ -20,33 +20,26 @@ import java.util.Set;
 public class UsersController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
-    public UsersController(UserService userService, RoleService roleService) {
+    public UsersController(UserService userService) {
         this.userService = userService;
-        this.roleService = roleService;
     }
 
-    @GetMapping("/registration")
-    public String registrationPage(@ModelAttribute("user") User user) {
-        return "/registration";
-    }
-
-    @PostMapping("/registration")
-    public String performRegistration(@ModelAttribute("user") User user)
-    {
-        Role role = new Role("ROLE_USER");
-        roleService.saveRole(role);
-        user.setRoles(Set.of(role));
-        userService.saveUser(user);
-        return "redirect:/login";
-    }
-
-    @GetMapping("/login")
-    public String loginPage(){
-        return "logi1n";
-    }
+//    @GetMapping("/registration")
+//    public String registrationPage(@ModelAttribute("user") User user) {
+//        return "/registration";
+//    }
+//
+//    @PostMapping("/registration")
+//    public String performRegistration(@ModelAttribute("user") User user)
+//    {
+//        Role role = new Role("ROLE_USER");
+//        roleService.saveRole(role);
+//        user.setRoles(Set.of(role));
+//        userService.saveUser(user);
+//        return "redirect:/login";
+//    }
 
     @GetMapping("/user")
     public String getUserPage(Model model,Principal principal) {
