@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="shortcut icon" href="Spring-logo.ico" type="image/x-icon">
+	<title>Admin panel</title>
+	<link rel="shortcut icon" href="https://javastudy.ru/wp-content/uploads/2015/04/Spring-logo.jpeg" type="image/x-icon">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="style.css">
@@ -119,8 +119,9 @@
 																       th:value="${user.getLastname()}" id="lastname"/>
 																<br/>
 																<label for="username" class="form-horizontal">Enter
-																	username (changing the name will cause a
-																	relogin)</label>
+																	username</label>
+																<div class="col-12 text-center font-weight-light">(changing the name will cause a
+																	relogin)</div>
 																<input type="text" class="form-control"
 																       th:name="username"
 																       th:value="${user.getUsername()}" id="username"/>
@@ -215,6 +216,7 @@
 																<br/>
 															</div>
 														</div>
+														<p class="text-center">if you delete the actual admin you will be logged out</p>
 														<div class="modal-footer">
 															<button type="button" class="btn btn-secondary"
 															        data-dismiss="modal">
