@@ -38,11 +38,11 @@ public class AdminsController {
         return "/admin";
     }
 
-    @GetMapping("/new")
-    public String getNewUserForm(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("roles", roleService.getRoles());
-        return "/new";
-    }
+//    @GetMapping("/new")
+//    public String getNewUserForm(@ModelAttribute("user") User user, Model model) {
+//        model.addAttribute("roles", roleService.getRoles());
+//        return "/new";
+//    }
 
     @PostMapping("/createNew")
     public String createUser(@ModelAttribute("user") User user,
@@ -55,16 +55,18 @@ public class AdminsController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/edit")
-    public String editUser(Model model, @PathVariable("id") Long id) {
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("roles", roleService.getRoles());
-        return "/edit";
-    }
+//    @GetMapping("/{id}/edit")
+//    public String editUser(Model model, @PathVariable("id") Long id) {
+//        model.addAttribute("user", userService.getUserById(id));
+//        model.addAttribute("roles", roleService.getRoles());
+//        return "/edit";
+//    }
 
     @PatchMapping(value = "/{id}/edit")
-    public String updateUser(@ModelAttribute("user1") User user, @RequestParam(value = "nameRole") String nameRole) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id,
+                             @RequestParam(value = "nameRole") String nameRole) {
+        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role role = new Role(nameRole);
         roleService.saveRole(role);
@@ -90,7 +92,7 @@ public class AdminsController {
     }
 
     @GetMapping("/user")
-    public String getUserPage(Model model,Principal principal) {
+    public String getUserPage(Model model, Principal principal) {
         Long id = userService.getUserByUsername(principal.getName()).getId();
         model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
         model.addAttribute("user", userService.getUserById(id));
