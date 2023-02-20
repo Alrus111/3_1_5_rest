@@ -4,17 +4,25 @@ import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
+import com.example.demo.util.UserErrorResponse;
+import com.example.demo.util.UserCreatingOrUpdatingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping("/admin")
+@CrossOrigin
 public class AdminsController {
 
     private final UserService userService;
@@ -28,14 +36,14 @@ public class AdminsController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping()
-    public String getAdminPage(@ModelAttribute("user") User user,
-                               Model model, Principal principal) {
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAdminPage() {
 
-        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
-        model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("roles", roleService.getRoles());
-        return "/admin";
+//        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
+//        model.addAttribute("users", userService.getAllUsers());
+//        model.addAttribute("roles", roleService.getRoles());
+
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
 //    @GetMapping("/new")
@@ -45,14 +53,14 @@ public class AdminsController {
 //    }
 
     @PostMapping("/createNew")
-    public String createUser(@ModelAttribute("user") User user,
-                             @RequestParam(value = "nameRole") String nameRole) {
+    public ResponseEntity<HttpStatus> createUser(@RequestBody @Valid User user,
+                                                 BindingResult bindingResult) {
+        saveRole(user.getRoles());
+        collectErrorMessage(bindingResult);
 
-        Role role = new Role(nameRole);
-        roleService.saveRole(role);
-        user.setRoles(Set.of(role));
         userService.saveUser(user);
-        return "redirect:/admin";
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 //    @GetMapping("/{id}/edit")
@@ -62,40 +70,71 @@ public class AdminsController {
 //        return "/edit";
 //    }
 
-    @PatchMapping(value = "/{id}/edit")
-    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id,
-                             @RequestParam(value = "nameRole") String nameRole) {
-        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @PutMapping(value = "/user")
+    public ResponseEntity<HttpStatus> updateUser(@RequestBody @Valid User user,
+                                                 BindingResult bindingResult) {
 
-        Role role = new Role(nameRole);
-        roleService.saveRole(role);
-        user.setRoles(Set.of(role));
+//        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        if (userService.updateUser(user))
-            return "redirect:/login";
-        else
-            return "redirect:/admin";
+        saveRole(user.getRoles());
+        collectErrorMessage(bindingResult);
+
+        userService.updateUser(user);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
-    public String removeUserById(@PathVariable("id") Long id, Principal principal) {
-        boolean checkDeletingUserIsCurrent = userService.getUserByUsername(principal.getName()).equals(userService.getUserById(id));
+
+    @DeleteMapping("/delete/{id}")
+    public String removeUserById(@PathVariable Long id, Principal principal) throws UserErrorResponse {
+//        boolean checkDeletingUserIsCurrent = userService.getUserByUsername(principal.getName()).equals(userService.getUserById(id));
+
+        User user = userService.getUserById(id);
+        if (user == null)
+            throw new UserErrorResponse("User with id " + id + " not exist", System.currentTimeMillis());
 
         roleService.removeRoleById(id);
         userService.removeById(id);
 
-        if (checkDeletingUserIsCurrent)
-            return "redirect:/login";
-        else
-            return "redirect:/admin";
+        return "user with id " + id + "was deleted";
     }
 
-    @GetMapping("/user")
-    public String getUserPage(Model model, Principal principal) {
+    @GetMapping("/userPage")
+    public User getUserPage(Model model, Principal principal) {
         Long id = userService.getUserByUsername(principal.getName()).getId();
-        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
-        model.addAttribute("user", userService.getUserById(id));
-        return "admin_show_user";
+//        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
+//        model.addAttribute("user", userService.getUserById(id));
+        return userService.getUserById(id);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(UserCreatingOrUpdatingException exception) {
+        UserErrorResponse response = new UserErrorResponse(
+                exception.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private void saveRole(Set<Role> roles) {
+        for (Role role : roles) {
+            roleService.saveRole(role);
+        }
+    }
+
+    private void collectErrorMessage(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMsg = new StringBuilder();
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                errorMsg.append(error.getField())
+                        .append(" - ").append(error.getDefaultMessage())
+                        .append(";");
+            }
+            throw new UserCreatingOrUpdatingException(errorMsg.toString());
+        }
     }
 }

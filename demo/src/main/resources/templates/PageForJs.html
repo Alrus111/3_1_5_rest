@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!--  <link rel="shortcut icon" href="Spring-logo.ico" type="image/x-icon">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+          integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <div class="navbar-brand">OLOLOSHka</div>
+        </div>
+
+        <a style="color: gray" class="nav-link" href="/logout">Logout</a>
+    </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-2 pt-2">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="false">User</a>
+            </div>
+        </div>
+        <div class="col-10 pt-2 bg-light">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
+                    <h1>Admin panel</h1>
+                    <nav class="nav nav-tabs me-3" id="nav-tab" role="tablist">
+                        <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" href="#nav-home" role="tab"
+                           aria-controls="nav-home" aria-selected="true">Uses table</a>
+                        <a class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" role="tab"
+                           aria-controls="nav-profile" aria-selected="false">New user</a>
+                    </nav>
+                    <div class="tab-content me-3" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div class="border ps-3 pt-2 pb-2 ">
+                                <h5>All users</h5>
+                            </div>
+                            <table class="table table-striped bg-white">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Lastname</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade bg-white pt-2 me-3" id="nav-profile" role="tabpanel"
+                         aria-labelledby="nav-profile-tab">
+                        <div class="text-center col-12 offset-4 col-md-3 offset-md-4">
+                            <form role="role" class="form-horizontal">
+                                <div class="form-group fw-bold">
+                                    <div class="form-group">
+                                        <label for="name" class="form-horizontal">Name</label>
+                                        <input type="name" class="form-control" id="newName"
+                                               placeholder="Введите name">
+                                        <br>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastname" class="form-horizontal">Lastname</label>
+                                        <input type="lastname" class="form-control" id="newLastname"
+                                               placeholder="Введите lastname">
+                                        <br>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username" class="form-horizontal">Username</label>
+                                        <input type="username" class="form-control" id="newUsername"
+                                               placeholder="Введите username">
+                                        <br>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password" class="form-horizontal">Password</label>
+                                        <input type="password" class="form-control" id="newPassword"
+                                               placeholder="Введите password">
+                                        <br>
+                                    </div>
+
+                                    <label class="form-horizontal">Role</label>
+                                    <select class="form-control" multiple size="2">
+                                        <option value="">ROLE_ADMIN</option>
+                                        <option value="">ROLE_USER</option>
+                                    </select>
+                                </div>
+                            </form>
+                            <br>
+                            <button type="button" class="btn btn-lg btn-success">Add new user</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade me-3" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <h1>User information-page</h1>
+                <div class="col-12 bg-light border pt-2 pb-2 ps-3">
+                    <h5>About users</h5>
+                </div>
+                <div class="mb-3 bg-white pt-3 pb-3 border">
+                    <div class="pe-4 ps-4 pt-2 ">
+                        <table class="table table-striped border-top">
+                            <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Lastname</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <th id="id" aria-placeholder="Id"></th>
+                            <td type="text" id="nameUser" placeholder="Name"/>
+                            <td id="lastnameUser" placeholder="Name"/>
+                            <td id="usernameUser" placeholder="Username"/>
+                            <td id="roleUser" placeholder="Roles"/>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" role="dialog" tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <form id="editUserForm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Edit user</h1>
+                    <button type="button" class="btn-close" data-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body text-center fw-bold col-12 offset-3 col-md-6 offset-md-3">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="name" class="form-horizontal">Name</label>
+                                <input type="text" class="form-control"
+                                       id="editId" name="id"readonly >
+                                <br>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name"
+                                       class="form-horizontal">Name</label>
+                                <input type="text" class="form-control"
+                                       id="editName"
+                                       placeholder="Введите name" name="name">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="form-horizontal">Lastname</label>
+                                <input type="text" class="form-control"
+                                       id="editLastname"
+                                       placeholder="Введите lastname" name="lastname">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="username" class="form-horizontal">Username</label>
+                                <input type="text" class="form-control"
+                                       id="editUsername"
+                                       placeholder="Введите username" name="username">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="form-horizontal">Password</label>
+                                <input type="password" class="form-control"
+                                       id="editPassword"
+                                       placeholder="Введите password" name="password">
+                                <br>
+                            </div>
+
+                            <label class="form-horizontal">Role</label>
+                            <select class="form-control" multiple size="2" name="roles">
+                                <option value="">ROLE_ADMIN</option>
+                                <option value="">ROLE_USER</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary">Edit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1"
+     aria-labelledby="exampleModalLabel2"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel2">Delete user</h1>
+                <button type="button" class="btn-close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body text-center fw-bold col-12 offset-3 col-md-6 offset-md-3">
+                    <form action="" role="role" class="form-horizontal">
+                        <div class="form-group">
+
+                            <div class="form-group">
+                                <label for="name"
+                                       class="form-horizontal">Name</label>
+                                <input type="name" class="form-control"
+                                       id="name"
+                                       placeholder="Введите name">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="form-horizontal">Lastname</label>
+                                <input type="lastname" class="form-control"
+                                       id="lastname"
+                                       placeholder="Введите lastname">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="username" class="form-horizontal">Username</label>
+                                <input type="username" class="form-control"
+                                       id="username"
+                                       placeholder="Введите username">
+                                <br>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="form-horizontal">Password</label>
+                                <input type="password" class="form-control"
+                                       id="password"
+                                       placeholder="Введите password">
+                                <br>
+                            </div>
+
+                            <label class="form-horizontal">Role</label>
+                            <select class="form-control" multiple size="2">
+                                <option value="">ROLE_ADMIN</option>
+                                <option value="">ROLE_USER</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+        integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2"
+        crossorigin="anonymous"></script>
+<script type="application/javascript" src="../static/ShowTable.js"></script>
+<script type="application/javascript" src="../static/EditUser.js"></script>
+<script type="application/javascript" src="../static/ShowUserById.js"></script>
+<script type="application/javascript" src="../static/userData.js"></script>
+
+</body>
+</html>
