@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/api")
 @CrossOrigin
 public class AdminsController {
 
@@ -36,58 +36,49 @@ public class AdminsController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/all")
+    @GetMapping(("/admin"))
     public ResponseEntity<List<User>> getAdminPage() {
-
-//        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
-//        model.addAttribute("users", userService.getAllUsers());
-//        model.addAttribute("roles", roleService.getRoles());
-
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    }
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        List<Role> allRoles = roleService.getRoles();
+        return new ResponseEntity<>(allRoles, HttpStatus.OK);
+    }
 
-//    @GetMapping("/new")
-//    public String getNewUserForm(@ModelAttribute("user") User user, Model model) {
-//        model.addAttribute("roles", roleService.getRoles());
-//        return "/new";
-//    }
-
-    @PostMapping("/createNew")
-    public ResponseEntity<HttpStatus> createUser(@RequestBody @Valid User user,
+    @PostMapping("/admin")
+    public ResponseEntity<User> createUser(@RequestBody @Valid User user,
                                                  BindingResult bindingResult) {
         saveRole(user.getRoles());
         collectErrorMessage(bindingResult);
 
         userService.saveUser(user);
-
-        return ResponseEntity.ok(HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-//    @GetMapping("/{id}/edit")
-//    public String editUser(Model model, @PathVariable("id") Long id) {
-//        model.addAttribute("user", userService.getUserById(id));
-//        model.addAttribute("roles", roleService.getRoles());
-//        return "/edit";
-//    }
 
-    @PutMapping(value = "/user")
-    public ResponseEntity<HttpStatus> updateUser(@RequestBody @Valid User user,
+    @PatchMapping(value = "/admin/{id}")
+    public ResponseEntity<User> updateUser(@RequestBody @Valid User user, @PathVariable Integer id,
                                                  BindingResult bindingResult) {
 
-//        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         saveRole(user.getRoles());
         collectErrorMessage(bindingResult);
 
         userService.updateUser(user);
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @DeleteMapping("/delete/{id}")
-    public String removeUserById(@PathVariable Long id, Principal principal) throws UserErrorResponse {
+    public String removeUserById(@PathVariable Integer id, Principal principal) throws UserErrorResponse {
 //        boolean checkDeletingUserIsCurrent = userService.getUserByUsername(principal.getName()).equals(userService.getUserById(id));
 
         User user = userService.getUserById(id);
@@ -98,14 +89,6 @@ public class AdminsController {
         userService.removeById(id);
 
         return "user with id " + id + "was deleted";
-    }
-
-    @GetMapping("/userPage")
-    public User getUserPage(Model model, Principal principal) {
-        Long id = userService.getUserByUsername(principal.getName()).getId();
-//        model.addAttribute("admin", userService.getUserByUsername(principal.getName()));
-//        model.addAttribute("user", userService.getUserById(id));
-        return userService.getUserById(id);
     }
 
     @ExceptionHandler
