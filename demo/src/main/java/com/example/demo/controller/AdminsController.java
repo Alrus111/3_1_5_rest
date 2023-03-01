@@ -9,6 +9,7 @@ import com.example.demo.util.UserCreatingOrUpdatingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +30,6 @@ public class AdminsController {
     private final RoleService roleService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
     public AdminsController(UserService userService, RoleService roleService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
@@ -44,6 +44,10 @@ public class AdminsController {
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
+    @GetMapping("/authUser")
+    public ResponseEntity<User> showAuthUser(Principal principal) {
+        return new ResponseEntity<>(userService.getUserByUsername(principal.getName()), HttpStatus.OK);
+    }
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> allRoles = roleService.getRoles();
@@ -53,42 +57,28 @@ public class AdminsController {
     @PostMapping("/admin")
     public ResponseEntity<User> createUser(@RequestBody @Valid User user,
                                                  BindingResult bindingResult) {
-        saveRole(user.getRoles());
-        collectErrorMessage(bindingResult);
 
+        collectErrorMessage(bindingResult);
         userService.saveUser(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
 
     @PatchMapping(value = "/admin/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody @Valid User user, @PathVariable Integer id,
-                                                 BindingResult bindingResult) {
+    public ResponseEntity<User> updateUser(@RequestBody @Valid User user, BindingResult bindingResult) {
 
-        if (user.getPassword().hashCode() != userService.getUserById(id).getPassword().hashCode())
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        saveRole(user.getRoles());
         collectErrorMessage(bindingResult);
-
         userService.updateUser(user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/delete/{id}")
-    public String removeUserById(@PathVariable Integer id, Principal principal) throws UserErrorResponse {
-//        boolean checkDeletingUserIsCurrent = userService.getUserByUsername(principal.getName()).equals(userService.getUserById(id));
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer id) {
 
-        User user = userService.getUserById(id);
-        if (user == null)
-            throw new UserErrorResponse("User with id " + id + " not exist", System.currentTimeMillis());
-
-        roleService.removeRoleById(id);
         userService.removeById(id);
-
-        return "user with id " + id + "was deleted";
+        return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler
@@ -99,12 +89,6 @@ public class AdminsController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    private void saveRole(Set<Role> roles) {
-        for (Role role : roles) {
-            roleService.saveRole(role);
-        }
     }
 
     private void collectErrorMessage(BindingResult bindingResult) {

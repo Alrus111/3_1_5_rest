@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,16 +23,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     @Transactional
     @Override
     public void saveUser(User user) {
+        saveAndSetRole(user.getRoles(), user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
     }
 
@@ -60,6 +62,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public boolean updateUser(User updatedUser) {
+        User userFromDB = userRepository.findById(updatedUser.getId()).get();
+        if (updatedUser.getPassword().hashCode()!=userFromDB.getPassword().hashCode()) {
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
         boolean checkUpdateUsername = false;
         if (userRepository.getUserByUsername(updatedUser.getUsername())==null)
             checkUpdateUsername = true;
@@ -86,5 +92,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+    }
+
+    private void saveAndSetRole(Set<Role> roles, User user) {
+        for (Role role : roles) {
+            roleService.saveRole(role);
+            user.setRoles(Set.of(role));
+        }
     }
 }
