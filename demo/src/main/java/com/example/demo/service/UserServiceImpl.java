@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.DAO.UserDAO;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,17 +18,16 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
+    private final UserDAO userDAO;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
-    public UserServiceImpl(EntityManager entityManager, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService) {
-        this.entityManager = entityManager;
+    public UserServiceImpl( UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService, UserDAO userDAO) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
+        this.userDAO = userDAO;
     }
 
     @Transactional
@@ -80,18 +78,11 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-
-
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = entityManager.createQuery("select u from User u join fetch u.roles ", User.class).getResultList().get(0);
-
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User with %s not found", username));
-        }
-        return user;
+        return userDAO.loadUserByUsername(username);
     }
+
 
     private void saveAndSetRole(Set<Role> roles, User user) {
         for (Role role : roles) {
