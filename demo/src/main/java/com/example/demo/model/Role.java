@@ -50,13 +50,6 @@ public class Role implements GrantedAuthority, Serializable {
         return getName();
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 
     @Override
     public boolean equals(Object obj) {
