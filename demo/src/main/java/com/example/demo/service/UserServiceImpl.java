@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.DAO.UserDAO;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -18,16 +17,14 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDAO userDAO;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
-    public UserServiceImpl( UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService, UserDAO userDAO) {
+    public UserServiceImpl( UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
-        this.userDAO = userDAO;
     }
 
     @Transactional
@@ -79,8 +76,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDAO.loadUserByUsername(username);
+        return userRepository.getUserWithRole(username);
     }
 
 
