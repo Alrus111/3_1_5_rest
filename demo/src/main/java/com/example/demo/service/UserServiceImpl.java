@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -78,7 +77,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getUserWithRole(username);
+        User user = userRepository.getUserWithRole(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User with %s not found", username));
+        }
+        return user;
     }
 
 
